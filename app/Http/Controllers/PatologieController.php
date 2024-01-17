@@ -86,41 +86,82 @@ class PatologieController extends Controller
     // }
     public function getFilters(Request $request)
 {
-    // $request->setMethod('POST');
-    // $filtri = $request->all();
-    $filtri = $request->input('filter');
-    
-    // dd($filtri);
+    $filtri = $request->all();
     return response()->json($filtri);
+    // Cache::put('filtri',$filtri, 60);
 }
 
-    public function query()
-    {
-        try {
+    // public function query()
+    // {
+    //     try {
+    //     $queryResult = patologie::select([
+    //             'patologie.patologia',
+    //             'tumori_casi.casi',
+    //             'comune_popolazione_tumori_test.anno',
+    //             'comune_popolazione_tumori_test.sesso',
+    //             'comune_popolazione_tumori_test.popolazione', 
+    //             'comuni.Comune',
+    //             'distretti.Distretto',
+    //             'asl.Asl',
+    //             'classi.classe_eta',
+    //             'classi.peso_eu',
+    //         ])
+    //         ->leftJoin('tumori_casi', 'patologie.IDPatologia', '=', 'tumori_casi.IDPatologia')
+    //         ->leftJoin('comune_popolazione_tumori_test', 'tumori_casi.IDComunePop', '=', 'comune_popolazione_tumori_test.ID')
+    //         ->leftJoin('comuni', 'comune_popolazione_tumori_test.IDComune', '=', 'comuni.IDComune')
+    //         ->leftJoin('distretti', 'comuni.IDDistretto', '=', 'distretti.IDDistretto')
+    //         ->leftJoin('asl', 'distretti.IDAsl', '=', 'asl.IDAsl')
+    //         ->leftJoin('classi', 'comune_popolazione_tumori_test.IDClasse', '=', 'classi.IDClasse')
+    //         ->where('patologie.patologia','=', 'Rene')
+    //         ->get();
+    //         $result = ['query' => $queryResult];
+    //         return $result;
+    // } catch (\Exception $e) {
+    //     return response()->json(['error' => 'Errore nella query'], 500);
+    //     }
+    // }
+    public function query(Request $request)
+{
+    try {
+        $filtri = $request->all();
+        $patologyFilter = $filtri['patology'] ?? '';
+        $sessoFilter = $filtri['filters']['sex'] ?? '';
+        // if ($sessoFilter === 'Maschi e Femmine') {
+        //     $sessoFilter = ['Maschi', 'Femmine'];
+        // }
         $queryResult = patologie::select([
-                'patologie.patologia',
-                'tumori_casi.casi',
-                'comune_popolazione_tumori_test.anno',
-                'comune_popolazione_tumori_test.sesso',
-                'comune_popolazione_tumori_test.popolazione', 
-                'comuni.Comune',
-                'distretti.Distretto',
-                'asl.Asl',
-                'classi.classe_eta',
-                'classi.peso_eu',
-            ])
-            ->leftJoin('tumori_casi', 'patologie.IDPatologia', '=', 'tumori_casi.IDPatologia')
-            ->leftJoin('comune_popolazione_tumori_test', 'tumori_casi.IDComunePop', '=', 'comune_popolazione_tumori_test.ID')
-            ->leftJoin('comuni', 'comune_popolazione_tumori_test.IDComune', '=', 'comuni.IDComune')
-            ->leftJoin('distretti', 'comuni.IDDistretto', '=', 'distretti.IDDistretto')
-            ->leftJoin('asl', 'distretti.IDAsl', '=', 'asl.IDAsl')
-            ->leftJoin('classi', 'comune_popolazione_tumori_test.IDClasse', '=', 'classi.IDClasse')
-            ->where('patologie.patologia','=', 'Rene')
-            ->get();
-            $result = ['query' => $queryResult];
-            return $result;
+            'patologie.patologia',
+            'tumori_casi.casi',
+            'comune_popolazione_tumori_test.anno',
+            'comune_popolazione_tumori_test.sesso',
+            'comune_popolazione_tumori_test.popolazione', 
+            'comuni.Comune',
+            'distretti.Distretto',
+            'asl.Asl',
+            'classi.classe_eta',
+            'classi.peso_eu',
+        ])
+        ->leftJoin('tumori_casi', 'patologie.IDPatologia', '=', 'tumori_casi.IDPatologia')
+        ->leftJoin('comune_popolazione_tumori_test', 'tumori_casi.IDComunePop', '=', 'comune_popolazione_tumori_test.ID')
+        ->leftJoin('comuni', 'comune_popolazione_tumori_test.IDComune', '=', 'comuni.IDComune')
+        ->leftJoin('distretti', 'comuni.IDDistretto', '=', 'distretti.IDDistretto')
+        ->leftJoin('asl', 'distretti.IDAsl', '=', 'asl.IDAsl')
+        ->leftJoin('classi', 'comune_popolazione_tumori_test.IDClasse', '=', 'classi.IDClasse')
+        // ->where('patologie.patologia', '=', $filtri['patologia']);
+        ->where('patologie.patologia', $patologyFilter);
+        if ($sessoFilter == 'Maschi e Femmine') {
+            //Nothing happened because get everithing
+        } elseif ($sessoFilter == 'Maschi') {
+            $queryResult->where('comune_popolazione_tumori_test.sesso', '=' ,'Maschi');
+        } elseif ($sessoFilter == 'Femmine') {
+            $queryResult->where('comune_popolazione_tumori_test.sesso', 'Femmine');
+        }
+        $queryResult = $queryResult->get();
+        
+        $result = ['query' => $queryResult];
+        return response()->json($result);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Errore nella query'], 500);
-        }
     }
+}
 }

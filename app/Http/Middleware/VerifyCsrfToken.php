@@ -13,5 +13,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'ricevi-filtri',
+        'visualizza-risultato',
+        'query-patologie',
     ];
 }

@@ -71,8 +71,8 @@ Route::apiResource('Chart1',Chart1Controller::class);
 
 Route::get('comune_popolazione_tumori_test_query', [ComunePopolazioneTumoriTestController::class, 'query']);
 Route::get('query-distretti', [DistrettiController::class, 'query']);
-Route::get('query-patologie', [PatologieController::class, 'query']);
-Route::get('/visualizza-risultato', [Chart1Controller::class, 'tuaFunzione']);
+Route::any('query-patologie', [PatologieController::class, 'query']);
+Route::get('visualizza-risultato', [Chart1Controller::class, 'chart1Results']);
 
 
 
