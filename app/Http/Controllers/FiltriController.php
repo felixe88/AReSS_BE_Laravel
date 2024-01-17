@@ -4,81 +4,73 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Session;
+
 
 class FiltriController extends Controller
 {
-
     // public function riceviFiltri(Request $request)
     // {
     //     try {
-    //         // Ottieni i dati JSON dalla richiesta
     //         $datiFiltri = $request->json()->all();
-    
-    //         // Aggiungi un log
-    //         // \Log::info('Dati filtri ricevuti: ' . json_encode($datiFiltri));
-            
-    //         // return response()->json($datiFiltri);
-    //         $stringaDatiRicevuti = "Questi sono i dati ricevuti: " . json_encode($datiFiltri);
-
-    //         return response()->json(['message' => $stringaDatiRicevuti]);
-    //     } catch (\Exception $e) {
-    //         // Aggiungi un log per eventuali errori
-    //         \Log::error('Errore nella gestione dei filtri: ' . $e->getMessage());
-    //         // Restituisci una risposta di errore
-    //         return response()->json(['error' => 'Errore nella gestione dei filtri'], 500);
-    //     }
-    //     $datiFiltri.patologia //voglio visualizzare i dati presenti in $datifiltri
-    // }
-    
-    public function riceviFiltri(Request $request)
-{
-    try {
-        // Ottieni i dati JSON dalla richiesta
-        $datiFiltri = $request->json()->all();
-
-        // Aggiungi un log
-        // \Log::info('Dati filtri ricevuti: ' . json_encode($datiFiltri));
-
-        if (isset($datiFiltri['Patologia'])) {
-            $patologia = $datiFiltri['Patologia'];
-            \Log::info('Patologia ricevuta: ' . $patologia);
-        } else {
-            \Log::warning('Campo "patologia" non presente nei dati ricevuti.');
-        }
-
-        $stringaDatiRicevuti = "Questi sono i dati ricevuti: " . json_encode($datiFiltri);
-
-        return response()->json(['message' => $stringaDatiRicevuti]);
-    } catch (\Exception $e) {
-        // Aggiungi un log per eventuali errori
-        \Log::error('Errore nella gestione dei filtri: ' . $e->getMessage());
-        // Restituisci una risposta di errore
-        return response()->json(['error' => 'Errore nella gestione dei filtri'], 500);
-    }
-}
-
-    // public function riceviFiltri(Request $request)
-    // {
-    //     try {
-    //         // Ottieni i dati JSON dalla richiesta
-    //         $datiFiltri = $request->json()->all();
-
-    //         // Fai qualcosa con i dati (es. applica filtri al tuo modello, ecc.)
-
-    //         // Aggiungi un log
-    //         // \Log::info('Dati filtri ricevuti:', $datiFiltri);
-    //         \Log::info('Dati filtri ricevuti: ' . json_encode($datiFiltri, JSON_PRETTY_PRINT));
-
-    //         // Restituisci una risposta
     //         return response()->json($datiFiltri);
     //     } catch (\Exception $e) {
-    //         // Aggiungi un log per eventuali errori
-    //         \Log::error('Errore nella gestione dei filtri: ' . $e->getMessage());
-
-
-    //         // Restituisci una risposta di errore
     //         return response()->json(['error' => 'Errore nella gestione dei filtri'], 500);
     //     }
     // }
 
+    public function riceviFiltri(Request $request)
+    {
+        try {
+            $datiFiltri = $request->json()->all();
+
+            // Salva i dati nella sessione per un breve periodo
+            $request->session()->put('datiFiltri', $datiFiltri);
+
+            // Restituisci i dati come risposta
+            return response()->json($datiFiltri);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Errore nella gestione dei filtri'], 500);
+        }
+    }
+    // public function riceviFiltri(Request $request)
+    // {
+    //     try {
+    //         $datiFiltri = $request->json()->all();
+
+    //         // Salva i dati nella sessione per un breve periodo
+    //         Session::put('filter', $datiFiltri);
+    //         // Restituisci i dati come risposta
+    //         return response()->json(['message' => 'Filters received successfully']);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Errore nella gestione dei filtri'], 500);
+    //     }
+    // }
+    // public function viewTemporaryData(Request $request)
+    // {
+    //     // Recupera i dati dalla sessione
+    //     $datiFiltri = $request->session()->get('datiFiltri');
+
+    //     // Visualizza i dati nel backend
+    //     dd($datiFiltri);
+    // }
+    // public function viewTemporaryData(Request $request)
+    // {
+    //     $datiFiltri = $request->session()->get('datiFiltri');
+
+    //     if ($datiFiltri) {
+    //         dd($datiFiltri);
+    //     } else {
+    //         dd('Nessun dato nella sessione.');
+    //     }
+    // }
+    public function viewTemporaryData(Request $request)
+    {
+        $filter = $request->session()->get('datiFiltri');
+        // dd(Session::get('filter'));
+
+
+        return response()->json(['filter' => $filter]);
+
+    }
 }

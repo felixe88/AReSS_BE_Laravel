@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\patologie;
 use Illuminate\Http\Request;
-use App\Model\tumori_colon_retto_casi;
+use App\Model\tumori_casi;
 use App\Models\comuni;
 use App\Models\distretti;
 use App\Models\asl;
 use App\Models\classi;
 use App\Models\comune_popolazione_tumori_test;
 use App\Models\regioni;
+use App\Models\filtri;
+use Illuminate\Support\Facades\Cache;
+
 
 class PatologieController extends Controller
 {
@@ -70,33 +73,52 @@ class PatologieController extends Controller
     {
         //
     }
+    // public function getFilters(Request $request)
+    // {
+    //     $filtri=$request->json()->all();
+    //     // dd($filtri);
+    //     Cache::put('filtri_key', $filtri,60);
+    //     return response()->json([
+    //         "code" => 200,
+    //         "message" => "Filters added successfully",
+    //         'filtri' => $filtri
+    //     ]);
+    // }
+    public function getFilters(Request $request)
+{
+    // $request->setMethod('POST');
+    // $filtri = $request->all();
+    $filtri = $request->input('filter');
+    
+    // dd($filtri);
+    return response()->json($filtri);
+}
+
     public function query()
     {
         try {
         $queryResult = patologie::select([
                 'patologie.patologia',
-                'tumori_colon_retto_casi.casi',
+                'tumori_casi.casi',
                 'comune_popolazione_tumori_test.anno',
                 'comune_popolazione_tumori_test.sesso',
                 'comune_popolazione_tumori_test.popolazione', 
-                'comuni.Descrizione',
-                // 'distretti.Descrizione',
-                // 'asl.Descrizione',
+                'comuni.Comune',
+                'distretti.Distretto',
+                'asl.Asl',
                 'classi.classe_eta',
                 'classi.peso_eu',
             ])
-            ->leftJoin('tumori_colon_retto_casi', 'patologie.IDPatologia', '=', 'tumori_colon_retto_casi.IDPatologia')
-            ->leftJoin('comune_popolazione_tumori_test', 'tumori_colon_retto_casi.IDComunePop', '=', 'comune_popolazione_tumori_test.ID')
+            ->leftJoin('tumori_casi', 'patologie.IDPatologia', '=', 'tumori_casi.IDPatologia')
+            ->leftJoin('comune_popolazione_tumori_test', 'tumori_casi.IDComunePop', '=', 'comune_popolazione_tumori_test.ID')
             ->leftJoin('comuni', 'comune_popolazione_tumori_test.IDComune', '=', 'comuni.IDComune')
             ->leftJoin('distretti', 'comuni.IDDistretto', '=', 'distretti.IDDistretto')
             ->leftJoin('asl', 'distretti.IDAsl', '=', 'asl.IDAsl')
             ->leftJoin('classi', 'comune_popolazione_tumori_test.IDClasse', '=', 'classi.IDClasse')
-            // ->where('comune_popolazione_tumori_test.anno', '=', 2020)
-            ->where('comune_popolazione_tumori_test.IDComune', '=', 71001)
+            ->where('patologie.patologia','=', 'Rene')
             ->get();
-    
-            info($queryResult);
-        return response()->json(['query' => $queryResult]);
+            $result = ['query' => $queryResult];
+            return $result;
     } catch (\Exception $e) {
         return response()->json(['error' => 'Errore nella query'], 500);
         }

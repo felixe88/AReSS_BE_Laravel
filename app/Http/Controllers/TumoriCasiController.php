@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\tumori_linfoma_hodgkin_casi;
+use App\Models\tumori_casi;
 use Illuminate\Http\Request;
 
-class TumoriLinfomaHodgkinCasiController extends Controller
+class TumoriCasiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $tumori_linfoma_hodgkin_casi = tumori_linfoma_hodgkin_casi::all();
+        $tumoricasi = tumori_casi::all();
 
-        return response()->json(['tumori_linfoma_hodgkin_casi' => $tumori_linfoma_hodgkin_casi]);
+        return response()->json(['tumori_casi' => $tumoricasi]);
     }
 
     /**

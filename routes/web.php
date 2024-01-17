@@ -38,6 +38,8 @@ use App\Http\Controllers\TumoriTiroideCasiController;
 use App\Http\Controllers\TumoriUteroColloCasiController;
 use App\Http\Controllers\TumoriUteroCorpoCasiController;
 use App\Http\Controllers\TumoriVescicaCasiController;
+use App\Http\Controllers\TumoriCasiController;
+use App\Http\Controllers\Chart1Controller;
 
 use Illuminate\Support\Facades\DB;
 
@@ -53,50 +55,26 @@ use Illuminate\Support\Facades\DB;
 */
 // Route::post('api/ricevi-filtri', [FiltriController::class, 'riceviFiltri']);
 
-Route::any('ricevi-filtri', [FiltriController::class, 'riceviFiltri']);
+Route::any('ricevi-filtri', [PatologieController::class, 'getFilters']);
 
 //*************************************************************************************************
 Route::apiResource('asl', AslController::class);
 Route::apiResource('classi', ClassiController::class);
 Route::apiResource('comune_popolazione_tumori_test', ComunePopolazioneTumoriTestController::class);
 Route::apiResource('comuni', ComuniController::class);
-Route::apiResource('cronicita_bpco_casi', CronicitaBpcoCasiController::class);
-Route::apiResource('cronicita_diabete_casi', CronicitaDiabeteCasiController::class);
-Route::apiResource('cronicita_ipertensione_casi', CronicitaIpertensioneCasiController::class);
-Route::apiResource('cronicita_scompenso_casi', CronicitaScompensoCasiController::class);
 Route::apiResource('distretti',DistrettiController::class);
 Route::apiResource('patologie',PatologieController::class);
 Route::apiResource('regioni',RegioniController::class);
-Route::apiResource('tumori_colon_retto_casi',TumoriColonRettoCasiController::class);
-Route::apiResource('tumori_encefalo_casi',TumoriEncefaloCasiController::class);
-Route::apiResource('tumori_fegato_casi',TumoriFegatoCasiController::class);
-Route::apiResource('leucemia_linfatica_acuta',TumoriLeucemiaLinfaticaAcutaCasiController::class);
-Route::apiResource('leucemia_linfatica_cronica',TumoriLeucemiaLinfaticaCronicaCasiController::class);
-Route::apiResource('leucemia_mieloide_acuta',TumoriLeucemiaMieloideAcutaCasiController::class);
-Route::apiResource('leucemia_mieloide_cronica',TumoriLeucemiaMieloideCronicaCasiController::class);
-Route::apiResource('tumori_linfoma_hodgkin',TumoriLinfomaHodgkinCasiController::class);
-Route::apiResource('tumori_linfoma_non_hodgkin',TumoriLinfomaNonHodgkinCasiController::class);
-Route::apiResource('tumori_mammella_casi',TumoriMammellaCasiController::class);
-Route::apiResource('tumori_melanoma_cute_casi',TumoriMelanomaCuteCasiController::class);
-Route::apiResource('tumori_mesotelioma_casi',TumoriMesoteliomaCasiController::class);
-Route::apiResource('tumori_mieloma_casi',TumoriMielomaCasiController::class);
-Route::apiResource('tumori_ovaio_casi',TumoriOvaioCasiController::class);
-Route::apiResource('tumori_pancreas_casi',TumoriPancreasCasiController::class);
-Route::apiResource('tumori_polmone_casi',TumoriPolmoneCasiController::class);
-Route::apiResource('tumori_prostata_casi',TumoriProstataCasiController::class);
-Route::apiResource('tumori_rene_casi',TumoriReneCasiController::class);
-Route::apiResource('tumori_stomaco_casi',TumoriStomacoCasiController::class);
-Route::apiResource('tumori_testa_collo_casi',TumoriTestaColloCasiController::class);
-Route::apiResource('tumori_testicolo_casi',TumoriTesticoloCasiController::class);
-Route::apiResource('tumori_tiroide_casi',TumoriTiroideCasiController::class);
-Route::apiResource('tumori_utero_collo_casi',TumoriUteroColloCasiController::class);
-Route::apiResource('tumori_utero_corpo_casi',TumoriUteroCorpoCasiController::class);
-Route::apiResource('tumori_vescica_casi',TumoriVescicaCasiController::class);
+Route::apiResource('tumori_casi',TumoriCasiController::class);
+Route::apiResource('Chart1',Chart1Controller::class);
 //*************************************************************************************************
 
 Route::get('comune_popolazione_tumori_test_query', [ComunePopolazioneTumoriTestController::class, 'query']);
 Route::get('query-distretti', [DistrettiController::class, 'query']);
 Route::get('query-patologie', [PatologieController::class, 'query']);
+Route::get('/visualizza-risultato', [Chart1Controller::class, 'tuaFunzione']);
+
+
 
 
 //*************************************************************************************************
