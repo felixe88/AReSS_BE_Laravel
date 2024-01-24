@@ -1,12 +1,7 @@
 <?php
+namespace App\Http\Controllers;
 
-namespace App\Http\Chart1;
-
-//composer require php-ai/php-ml   *****per installarlo********
-use Phpml\Math\Statistic\Distribution\ChiSquare;
-//****************** */
-// use MathPHP\Probability\Distribution\ChiSquare;
-class Calcolatore
+class Functions
 {
     private static $risultato;
 

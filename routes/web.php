@@ -40,6 +40,7 @@ use App\Http\Controllers\TumoriUteroCorpoCasiController;
 use App\Http\Controllers\TumoriVescicaCasiController;
 use App\Http\Controllers\TumoriCasiController;
 use App\Http\Controllers\Chart1Controller;
+use App\Http\Controllers\tumoriPolmoneController;
 
 use Illuminate\Support\Facades\DB;
 
@@ -67,10 +68,10 @@ Route::apiResource('patologie',PatologieController::class);
 Route::apiResource('regioni',RegioniController::class);
 Route::apiResource('tumori_casi',TumoriCasiController::class);
 Route::apiResource('Chart1',Chart1Controller::class);
+Route::apiResource('tumori_polmone',tumoriPolmoneController::class);
 //*************************************************************************************************
 
 Route::get('comune_popolazione_tumori_test_query', [ComunePopolazioneTumoriTestController::class, 'query']);
-Route::get('query-distretti', [DistrettiController::class, 'query']);
 Route::any('query-patologie', [PatologieController::class, 'query']);
 Route::get('visualizza-risultato', [Chart1Controller::class, 'chart1Results']);
 
