@@ -73,6 +73,7 @@ Route::apiResource('tumori_polmone',tumoriPolmoneController::class);
 
 Route::get('comune_popolazione_tumori_test_query', [ComunePopolazioneTumoriTestController::class, 'query']);
 Route::any('query-patologie', [PatologieController::class, 'query']);
+Route::any('query-peso-eu', [PatologieController::class, 'queryPesoEu']);
 Route::get('visualizza-risultato', [Chart1Controller::class, 'chart1Results']);
 
 

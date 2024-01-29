@@ -15,5 +15,6 @@ class VerifyCsrfToken extends Middleware
         'ricevi-filtri',
         'visualizza-risultato',
         'query-patologie',
+        'query-peso-eu'
     ];
 }

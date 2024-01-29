@@ -13,6 +13,7 @@ use App\Models\comune_popolazione_tumori_test;
 use App\Models\regioni;
 use App\Models\filtri;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 
 class PatologieController extends Controller
@@ -128,14 +129,57 @@ public function query(Request $request)
         ->where('patologie.IDPatologia', '15')
         ->get();
         $result = [$queryResult];
-        // echo '<pre>';
-        // print_r($result);
-        // echo '</pre>';
-        // echo '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
-        // var_dump($result);
         return response()->json($result);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Errore nella query'], 500);
     }
 }
+
+public function queryPesoEu(Request $request)
+{
+    try {
+        $filtri = $request->all();
+        $sessoFilter = $filtri['filters']['sex'] ?? '';
+        $anniFilter = $filtri['filters']['years'] ?? [];
+        $etaFilter = $filtri['filters']['age'] ?? [];
+
+        $result = DB::table('patologie')
+            ->select([
+                'comune_popolazione_tumori_test.anno',
+                'asl.Asl',
+                DB::raw('CAST(SUM(classi.peso_eu) AS SIGNED) AS somma_peso_eu')
+            ])
+            ->join('tumori_casi', 'patologie.IDPatologia', '=', 'tumori_casi.IDPatologia')
+            ->join('comune_popolazione_tumori_test', function ($join) use ($sessoFilter) {
+                $join->on('tumori_casi.IDComunePop', '=', 'comune_popolazione_tumori_test.ID');
+            if (!empty($annoFilter)) {
+                $anniFilter = explode(',', $annoFilter);
+                $join->whereIn('comune_popolazione_tumori_test.anno', $anniFilter);
+            }
+            if (!empty($etaFilter)) {
+                $rangeArray = explode(',', $etaFilter);
+                $join->where(function ($query) use ($rangeArray) {
+                    foreach ($rangeArray as $range) {
+                        list($start, $end) = explode('-', $range);
+                        $query->orWhereBetween('classi.classe_eta', [$start, $end]);
+                    }
+                });
+            }
+        })
+            ->leftJoin('comuni', 'comune_popolazione_tumori_test.IDComune', '=', 'comuni.IDComune')
+            ->leftJoin('distretti', 'comuni.IDDistretto', '=', 'distretti.IDDistretto')
+            ->leftJoin('asl', 'distretti.IDAsl', '=', 'asl.IDAsl')
+            ->leftJoin('classi', 'comune_popolazione_tumori_test.IDClasse', '=', 'classi.IDClasse')
+            ->whereIn('comuni.Comune', ['Accadia', 'Bari', 'Arnesano', 'Carosino', 'Cisternino', 'Minervino Murge'])
+            ->where('patologie.IDPatologia', '15')
+            ->where('comune_popolazione_tumori_test.sesso', '=' , 'Femmine');
+        $result = $result->groupBy('comune_popolazione_tumori_test.anno', 'asl.Asl')->get();
+
+        return response()->json($result);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Errore nella query'], 500);
+    }
+}
+
+
 }
